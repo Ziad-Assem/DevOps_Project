@@ -282,7 +282,7 @@ pipeline {
                             sh '''
                                 echo "💥 Destroying Terraform infrastructure..."
                                 terraform apply tfplan
-                                echo "✅ Infrastructure destroyed successfully!"
+                                echo "✅ Infrastructure destroyed successfully!!"
                             '''
                         }
                     }
