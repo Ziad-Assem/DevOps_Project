@@ -120,8 +120,15 @@ pipeline {
         stage('Check terraform Version') {
             steps {
                 script {
-                    def terraformVersion = sh(
-                        script: 'terraform -version | head -n 1 | awk \'{print $2}\'',
+                    sh '''
+                        echo "Checking Terraform version..."
+                        if ! command -v terraform &> /dev/null; then
+                            echo "Terraform is not installed. Please install Terraform."
+                            exit 1
+                        fi
+                        terraform version
+                    '''
+                }
     }
 
     post {
