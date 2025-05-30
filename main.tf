@@ -1,4 +1,4 @@
-# Variables
+# Variables Terraform 2
 variable "app_name" {
   description = "Name of the application"
   type        = string
