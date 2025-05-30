@@ -46,7 +46,42 @@ pipeline {
         // etc...
     }
     
-    post {
-        // Your post-build actions
+post {
+    always {
+        script {
+            // Clean up temporary files
+            sh 'rm -f tfplan terraform_outputs.json ecr_url.txt ecs_cluster.txt ecs_service.txt image_version.txt'
+            // Archive Terraform state and logs
+            archiveArtifacts artifacts: 'terraform.tfstate*', allowEmptyArchive: true
+        }
     }
+    
+    success {
+        echo "✅ Pipeline completed successfully!"
+        script {
+            def commitMsg = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+            echo "Deployed commit: ${env.GIT_COMMIT_SHORT}"
+            echo "Commit message: ${commitMsg}"
+        }
+    }
+    
+    failure {
+        echo "❌ Pipeline failed!"
+        script {
+            withCredentials([usernamePassword(credentialsId: 'aws-access-key-id', 
+                                            usernameVariable: 'AWS_ACCESS_KEY_ID', 
+                                            passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                sh '''
+                    echo "Pipeline failed. Checking if cleanup is needed..."
+                    # Uncomment below if you want to destroy infrastructure on failure
+                    # terraform destroy -auto-approve -var="app_name=$APP_NAME" -var="aws_region=$AWS_DEFAULT_REGION"
+                '''
+            }
+        }
+    }
+    
+    unstable {
+        echo "⚠️ Pipeline completed with warnings"
+    }
+}
 }
