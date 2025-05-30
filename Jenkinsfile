@@ -90,8 +90,7 @@ pipeline {
     agent any
 
     environment {
-        // Use withCredentials to bind AWS credentials to env vars
-        AWS_DEFAULT_REGION = 'us-east-1'  // Change as needed
+        AWS_DEFAULT_REGION = 'us-east-1'  // Change to your preferred region
     }
 
     stages {
@@ -108,32 +107,31 @@ pipeline {
                         sh '''
                             echo "Testing AWS CLI access..."
                             aws sts get-caller-identity --output text
-                            echo "AWS CLI is working! ✅"
-
+                            echo "✅ AWS CLI is working!"
+                            
                             echo "Listing S3 buckets (if any)..."
-                            aws s3 ls || echo "No S3 buckets found (or permissions issue)."
+                            aws s3 ls || echo "⚠️ No S3 buckets found (or permissions issue)."
                         '''
                     }
                 }
             }
         }
-        stage('Check terraform Version') {
+
+        stage('Check Terraform Version') {
             steps {
                 script {
                     sh '''
                         echo "Checking Terraform version..."
-                        if ! command -v terraform &> /dev/null; then
-                            echo "Terraform is not installed. Please install Terraform."
-                            exit 1
-                        fi
-                        terraform version
+                        terraform --version || echo "❌ Terraform not installed or not in PATH!"
                     '''
                 }
+            }
+        }
     }
 
     post {
         always {
-            echo "AWS CLI test completed."
+            echo "Pipeline completed."
         }
     }
 }
