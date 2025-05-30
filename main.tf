@@ -1,4 +1,4 @@
-# Variables Terraform 5
+# Variables Terraform 6
 variable "app_name" {
   description = "Name of the application"
   type        = string
