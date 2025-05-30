@@ -90,25 +90,30 @@ pipeline {
     agent any
 
     environment {
-        // Retrieve AWS credentials from Jenkins (username = Access Key ID, password = Secret Access Key)
-        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id').username
-        AWS_SECRET_ACCESS_KEY = credentials('aws-access-key-id').password
-        AWS_DEFAULT_REGION   = 'us-east-1'  // Change to your preferred region
+        // Use withCredentials to bind AWS credentials to env vars
+        AWS_DEFAULT_REGION = 'us-east-1'  // Change as needed
     }
 
     stages {
         stage('Test AWS CLI Access') {
             steps {
-                script {
-                    // Test AWS CLI connectivity by listing S3 buckets (or any safe AWS command)
-                    sh '''
-                        echo "Testing AWS CLI access..."
-                        aws sts get-caller-identity --output text
-                        echo "AWS CLI is working! ✅"
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-access-key-id',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    script {
+                        sh '''
+                            echo "Testing AWS CLI access..."
+                            aws sts get-caller-identity --output text
+                            echo "AWS CLI is working! ✅"
 
-                        echo "Listing S3 buckets (if any)..."
-                        aws s3 ls || echo "No S3 buckets found (or permissions issue)."
-                    '''
+                            echo "Listing S3 buckets (if any)..."
+                            aws s3 ls || echo "No S3 buckets found (or permissions issue)."
+                        '''
+                    }
                 }
             }
         }
@@ -116,7 +121,6 @@ pipeline {
 
     post {
         always {
-            // Cleanup (optional)
             echo "AWS CLI test completed."
         }
     }
