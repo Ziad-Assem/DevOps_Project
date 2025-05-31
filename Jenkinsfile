@@ -299,6 +299,8 @@ pipeline {
                 script {
                     sh '''
                         echo "Running Terraform..."
+                        ls .
+                        pwd
                         terraform plan || echo "❌ Terraform not installed or not in PATH!"
                     '''
                 }
