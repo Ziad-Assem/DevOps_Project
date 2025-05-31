@@ -314,7 +314,7 @@ pipeline {
                             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                             
                             terraform init
-                            terraform destroy --auto-approve || echo "❌ Terraform plan failed!"
+                            terraform destroy --auto-approve || echo "❌ Terraform plan failed!!"
                         '''
                     }
                 }
