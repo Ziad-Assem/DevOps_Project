@@ -311,7 +311,7 @@ pipeline {
                             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                             
                             terraform init
-                            terraform apply --auto-approve || echo "❌ Terraform plan failed!!!"
+                            terraform apply --auto-approve || echo "❌ Terraform plan failed!!"
                         '''
                     }
                 }
