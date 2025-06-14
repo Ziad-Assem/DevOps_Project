@@ -285,9 +285,6 @@ pipeline {
                             echo "Testing AWS CLI access..."
                             aws sts get-caller-identity --output text
                             echo "✅ AWS CLI is working!"
-                            
-                            echo "Listing S3 buckets (if any)..."
-                            aws s3 ls || echo "⚠️ No S3 buckets found (or permissions issue)."
                         '''
                     }
                 }
@@ -314,7 +311,7 @@ pipeline {
                             export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                             
                             terraform init
-                            terraform apply --auto-approve || echo "❌ Terraform plan failed!!"
+                            terraform apply --auto-approve || echo "❌ Terraform plan failed!!!"
                         '''
                     }
                 }
